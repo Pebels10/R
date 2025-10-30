@@ -13,7 +13,6 @@ library(purrr)
 library(geosphere)
 library(jsonlite)
 library(tidyverse)
-library(dplyr)
 library(readxl)
 
 
@@ -114,10 +113,41 @@ macro_madrid_limpio_22 <- macro_madrid_relleno %>%
 
 ########## AHORA EMPIEZA LO QUE REALMENTE QUEREMOS HACER ##########
 
+# En primer lugar vamos a intentar hacer un match entre las dos matrices para saber cuantos nombres de 
+# columnas hay en cada sitio y cuantas coinciden y cuantas no. 
 
+# 1º: Vamos a extraer los nombres de las especies de las columnas y van a aparecer como Values en la pestaña de Enviroment. 
 
+macro_peninsula_limpio <- macro_peninsula_laguna_22 # Hago esto por si se lía seguir teniendo la Data de macro_peninsula_laguna_22. 
+macro_madrid_limpio <- macro_madrid_limpio_22 # Lo mismo que la fila de arriba pero para Madrid. 
 
+cols_peninsula <- colnames(macro_peninsula_limpio)[!colnames(macro_peninsula_limpio) %in% c("id")]
+cols_madrid <- colnames(macro_madrid_limpio)[!colnames(macro_madrid_limpio) %in% c("Codigo")]
 
+# 2º: Vamos a comprobar que columnas hay en común:
 
+comunes <- intersect(cols_peninsula, cols_madrid) # Salen 44 comunes. 
+
+# Me parecen muy pocos comunes, voy a intentar hacer una aproximación por similitudes. 
+# Para ello vamos a usar el paquete stringdist(calcula qué tan parecidas son dos cadenas de texto, midiendo la “distancia” entre ellas (por ejemplo, cuántas letras hay que cambiar para que una se convierta en la otra).).
+
+install.packages("stringdist")
+
+library(stringdist) #Da la impresión de que este paquete entra dentro del de tidyr, así que igual ni hacía falta. 
+
+similares <- stringdist::amatch(cols_madrid, cols_peninsula, maxDist = 2)
+similar_pairs <- data.frame(
+  data_madrid = cols_madrid,
+  posible_match_peninsula = cols_peninsula[similares]
+)
+head(similar_pairs)
+
+# Esto es un poco raro, voy a extraerlo a excell directamente para verlo mejor: Voy a usar un paquete para eso. 
+
+install.packages("openxlsx")
+
+library(openxlsx)
+
+write.xlsx(similar_pairs, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/especies_similares_M_P_22.xlsx", rowNames = FALSE)
 
 
