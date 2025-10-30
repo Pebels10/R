@@ -1,7 +1,5 @@
 
-
-
-# DOCUMENTO NUEVO PARA LA EXTRACCIÓN DE LA INFORMACIÓN DE LA MATRIZ DE MADRID. 
+## EXTRACCIÓN DE LA INFORMACIÓN DE LA MATRIZ DE MADRID Y FUSIÓN CON LA NACIONAL ##
 
 install.packages("readxl")
 install.packages("tidyverse")
@@ -111,7 +109,7 @@ macro_madrid_limpio_22 <- macro_madrid_relleno %>%
 
 
 
-########## AHORA EMPIEZA LO QUE REALMENTE QUEREMOS HACER ##########
+########## VER NOMBRES DE ESPECIES COMUNES ##########
 
 # En primer lugar vamos a intentar hacer un match entre las dos matrices para saber cuantos nombres de 
 # columnas hay en cada sitio y cuantas coinciden y cuantas no. 
@@ -150,7 +148,7 @@ library(openxlsx)
 
 write.xlsx(similar_pairs, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/especies_similares_M_P_22.xlsx", rowNames = FALSE)
 
-##### FUSIÓN DE LAS MATRICES #####
+########## FUSIÓN DE LAS MATRICES #####
 
 # Lo primero que vamos a hacer es llamar de la misma manera a las columnas de id. 
 
