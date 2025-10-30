@@ -20,6 +20,8 @@ macro_madrid_22 <- read.csv2("C:/Users/Pablo/Documents/R/extraccion_madrid_22/ma
 # Hay que usar read.csv2 para que asuma que los separadores son puntos y comas y lea
 #bien el documento, si no hace cosas raras. 
 
+#Si yo modifico algo en este documento ya se me va a actualizar también en el otro lado y viceversa?
+
 
 
 
@@ -27,3 +29,4 @@ macro_madrid_22 <- read.csv2("C:/Users/Pablo/Documents/R/extraccion_madrid_22/ma
 
 
               
+
