@@ -150,4 +150,45 @@ library(openxlsx)
 
 write.xlsx(similar_pairs, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/especies_similares_M_P_22.xlsx", rowNames = FALSE)
 
+##### FUSIÓN DE LAS MATRICES #####
+
+# Lo primero que vamos a hacer es llamar de la misma manera a las columnas de id. 
+
+install.packages("dplyr")
+
+library(dplyr)
+
+macro_madrid_limpio <- macro_madrid_limpio %>% # De esta forma llamo id en las dos matrices a la primera columna. 
+  rename(id = Codigo)
+
+# Para fusionar vamos a usar la función bind_rows().
+
+macro_22 <- bind_rows(macro_madrid_limpio, macro_peninsula_limpio)
+
+# Sale increible, lo único que los valores que no comparten una u otra matriz quedan como N/A y prefiero que sean 0. 
+# Vamos a convertirlos en 0. 
+
+macro_22[is.na(macro_22)] <- 0
+
+# Vamos a exportar la matriz a excell para tener la fusión en bruto. 
+
+write.xlsx(macro_22, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/macro_22_bruto.xlsx", rowNames = FALSE)
+
+# Vamos a intentar eliminar las columnas cuyo valor sume 0 (columnas vacías que no nos sirven de nada).
+
+macro_22_limpia <- macro_22[, c("id", names(macro_22[,-1])[colSums(macro_22[,-1], na.rm = TRUE) != 0])]
+
+                  # macro_22[,-1] → selecciona todas las columnas excepto la primera.
+                  # colSums(..., na.rm = TRUE) → calcula la suma de cada columna ignorando NA.
+                  # != 0 → filtra solo las columnas que no están vacías.
+                  # names(...) → obtiene los nombres de esas columnas.
+                  # c("id", ...) → mantiene la primera columna id.
+                  # macro_22[, ...] → selecciona finalmente las columnas útiles en tu data frame.
+
+
+# Vamos a exportar la matriz final:
+
+write.xlsx(macro_22_limpia, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/macro_22_limpio.xlsx", rowNames = FALSE)
+
+
 
