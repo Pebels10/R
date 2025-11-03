@@ -197,36 +197,104 @@ write.xlsx(macro_22_limpia, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/mac
 # Ya que hay algún error en la matriz vamos a utilizar una función para poder limpiar las columnas duplicadas y 
 # generar una columna nueva. 
 
-# Para ello vamos a generar una función (como si hiciéramos un programilla) para poder hacer el proceso. 
+# Para ello vamos a Crear una lista de las excepciones que queremos quitarnos de encima. 
+
+
+fusion_list <- list(
+  "Anophelinae_L" = c("Anophelinae", "Anophelinae_L"),
+  "Bidessus_goudotii_A" = c("Bidessus_goudoti_A", "Bidessus_goudotti_A"),
+  "Branchipus_schafferi" = c("Branchipus_schaferi_F_A", "Branchipus_schaferi_M_A", "Branchipus_schafferi"), 
+  "Ceratopogonidae_L" = c("Ceratopogonidae_L", "Ceratopogoninae"),
+  "Chalcolestes_viridis_L" = c("Chalcolestes_viridis_L", "Chalcolestes_viridis"),
+  "Chaoborus_L" = c("Chaoborus_L", "Chaoborus"),
+  "Chaoboridae_pupa" = c("Chaoboridae_pupa", "Chaoboridae_culicidae_pupa"),
+  "Chirocephalus_diaphanus" = c("Chirocephalus_diaphanus", "Chirocephalus_diaphanus_F_A", "Chirocephalus_diaphanus_M_A"),
+  "Chironomidae_L" = c("Chironomidae_L", "Chironominae", "Chironomini_L", "Chironomus_plumosus_L"),
+  "Cloeon_dipterum" = c("Cloeon_dipterum", "Cloeon"),
+  "Coenagrion_caerulescens_L" = c("Coenagrion_caerulescens_L", "Coenagrion_caerulecans_L"),
+  "Coenagrionidae_L" = c("Coenagrionidae_L", "Coenagrionidae"),
+  "Corixa_affinis_A" = c("Corixa_affinis_A", "Corixa_affinis"),
+  "Corixa_iberica_A" = c("Corixa_iberica_A", "Corixa_iberica"),
+  "Corixa_punctata_A" = c("Corixa_punctata_A", "Corixa_punctata"),
+  "Culicinae_L" = c("Culicinae", "Culicinae_pupa"),
+  "Culicinae_pupa" = c("Culicinae_pupa", "Culicidae_pupa"),
+  "Cymatia_rogenhoferi_A" = c("Cymatia_rogenhoferi_A", "Cymatia_rogenhoferi", "Cymatia_rogenhoferi_A_22.1"),
+  "Dytiscus_L" = c("Dytiscus_L", "Dytiscus_sp_L"),
+  "Enochrus_fuscipennis_quadripunctatus_A" = c("Enochrus_fuscipennis_quadripunctatus_A", "Enochrus_fuscipennis_A"),
+  "Galba_truncatula" = c("Galba_truncatula", "Galba_trunculata"),
+  "Gerris_L" = c("Gerris_L", "Gerridae_juvenil"),
+  "Gerris_gibbifer_A" = c("Gerris_gibiffer_A", "Gerris_gibbifer"),
+  "Gerris_thoracicus_A" = c("Gerris_thoracicus_A", "Gerris_thoracicus"),
+  "Gyrinus_A" = c("Gyrinus_A", "Gyrinus_caspius_o_distinctus_A"),
+  "Haliplus_A" = c("Haliplus_A", "Haliplus_sp_A"),
+  "Haliplus_L" = c("Haliplus_L", "Haliplus_sp_L"),
+  "Hesperocorixa_sahlbergi_A" = c("Hesperocorixa_sahlbergi_A", "Hesperocorixa_sahlbergi"),
+  "Hydrometra_stagnorum_A" = c("Hydrometra_stagnorum_A", "Hydrometra_stagnorum"),
+  "Hydroporus_A" = c("Hydroporus_A", "Hydroporus_sp_A"),
+  "Hydroporus_L" = c("Hydroporus_L", "Hydroporus_sp_L"),
+  "Hygrobia_L" = c("Hygrobia_L", "Hygrobia_hermanni_L"),
+  "Ischnura_L" = c("Ischnura_L", "Ishnura_sp"),
+  "Laccophilus_L" = c("Laccophilus_L", "Laccophilus_minutus_L", "Lacophilinae_L"),
+  "Lestes_barbarus_L" = c("Lestes_barbarus_L", "Lestes_barbarus"),
+  "Lestes_dryas_L" = c("Lestes_dryas_L", "Lestes_dryas"),
+  "Lestes_L" = c("Lestes_L", "Lestes_spp."),
+  "Lestes_virens_L" = c("Lestes_virens_L", "Lestes_virens"),
+  "Naucoris_L" = c("Naucoris_L", "Naucoris_maculatus_L"),
+  "Naucoris_maculatus_A" = c("Naucoris_maculatus_A", "Naucoris_maculatus"),
+  "Nepa_cinerea_A" = c("Nepa_cinerea", "Nepa_A"),
+  "Notonecta_L" = c("Notonecta_L", "Notonecta_juvenil"),
+  "Notonecta_maculata_A" = c("Notonecta_maculata_A", "Notonecta_maculata"),
+  "Notonecta_meridionalis_A" = c("Notonecta_meridionalis_A", "Notonecta_meridionalis"),
+  "Notonecta_viridis_A" = c("Notonecta_viridis_A", "Notonecta_viridis"),
+  "Orthocladiinae_L" = c("Orthocladiinae_L", "Orthocladiinae"),
+  "Physela_acutta" = c("Physela_acutta", "Physela_acuta"),
+  "Planorbidae" = c("Planorbidae", "Planorbis"),
+  "Plea_minutissima_A" = c("Plea_minutissima_A", "Plea_minutissima"),
+  "Sigara_lateralis_A" = c("Sigara_lateralis_A", "Sigara_lateralis"),
+  "Sigara_limitata_A" = c("Sigara_limitata_A", "Sigara_limitata"),
+  "Sigara_nigrolineata_A" = c("Sigara_nigrolineata_A", "Sigara_nigrolineata"),
+  "Sigara_stagnalis_A" = c("Sigara_stagnalis_A", "Sigara_stagnalis"),
+  "Stratiomyidae_L" = c("Stratiomyidae_L", "Stratiomyidae"),
+  "Sympetrum_fonscolombii_L" = c("Sympetrum_fonscolombii_L", "Sympetrum_fonscolombii"),
+  "Sympetrum_L" = c("Sympetrum_L", "Sympetrum_sp"),
+  "Tabanidae_L" = c("Tabanidae_L", "Tabanidae"),
+  "Terrestre" = c("Terrestre", "Terrestres_A", "Terrestres_L"),
+  "Tipulidae_L" = c("Typulidae_L", "Tipulidae"),
+  "Triops_A" = c("Triops_A", "Triops_cancriformis")
+)
+ 
+# Una vez tenemos la lista completa de los errores vamos a pedirla que la corrija de una. 
 
 fusionar_columnas <- function(data, columnas_a_unir, nuevo_nombre) {
-  # Comprobar que las columnas existen en el data.frame
-  columnas_a_unir <- columnas_a_unir[columnas_a_unir %in% names(data)]
+  # Solo usar columnas que existan
+  existentes <- columnas_a_unir[columnas_a_unir %in% names(data)]
   
-  if (length(columnas_a_unir) < 2) {
-    warning("Debes indicar al menos dos columnas que existan en la matriz.")
+  if (length(existentes) == 0) {
+    warning(paste("No existen columnas a unir para", nuevo_nombre))
     return(data)
   }
   
-  # Crear la nueva columna como suma (ignorando NA)
-  data[[nuevo_nombre]] <- rowSums(data[, columnas_a_unir], na.rm = TRUE)
-  
-  # Eliminar las columnas originales (excepto la de nuevo nombre si ya existía)
-  data <- data[, !names(data) %in% setdiff(columnas_a_unir, nuevo_nombre)]
+  if (length(existentes) == 1) {
+    # Si solo hay una, renombramos si hace falta
+    names(data)[names(data) == existentes] <- nuevo_nombre
+  } else {
+    # Sumamos las columnas existentes
+    data[[nuevo_nombre]] <- rowSums(data[, existentes, drop = FALSE], na.rm = TRUE)
+    # Eliminamos las originales, excepto la nueva
+    data <- data[, !names(data) %in% setdiff(existentes, nuevo_nombre)]
+  }
   
   return(data)
 }
 
-# Vamos a comprobar que existe la función
 
-macro_22_corregida <- fusionar_columnas(
-  macro_22_limpia,
-  c("Anophelinae", "Anophelinae_L"),
-  "Anophelinae_L"
-)
+# Una vez tenemos nuestra function, corremos un código para que realice la función. 
 
-
-write.xlsx(macro_22_corregida, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/macro_22_corregida.xlsx", rowNames = FALSE)
+for (nombre in names(fusion_list)) {
+  columnas <- fusion_list[[nombre]]
+  print(paste("Fusionando columnas:", paste(columnas, collapse = " + "), "→", nombre))
+  macro_22_corregida <- fusionar_columnas(macro_22_corregida, columnas, nombre)
+}
 
 
 
