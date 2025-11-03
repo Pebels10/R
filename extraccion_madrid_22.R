@@ -296,6 +296,9 @@ for (nombre in names(fusion_list)) {
   macro_22_corregida <- fusionar_columnas(macro_22_corregida, columnas, nombre)
 }
 
+# Vamos a extraer nuestro documento fino. 
+
+write.xlsx(macro_22_corregida, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/macro_22_corregido.xlsx", rowNames = FALSE)
 
 
 
