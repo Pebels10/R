@@ -50,6 +50,7 @@ install.packages("tidyr")
 library(tidyr)
 
 ## Primero haya que convertir los huecos en NA, que en realidad sean celdas vacías. 
+macro_peninsula_mangueo_NA_22 <- macro_peninsula_mangueo_22
 
 macro_peninsula_mangueo_NA_22$id[macro_peninsula_mangueo_22$id == ""] <- NA
 
@@ -187,6 +188,48 @@ macro_22_limpia <- macro_22[, c("id", names(macro_22[,-1])[colSums(macro_22[,-1]
 # Vamos a exportar la matriz final:
 
 write.xlsx(macro_22_limpia, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/macro_22_limpio.xlsx", rowNames = FALSE)
+
+
+
+
+########## CORRECCIÓN DE LOS ERRORES DE LA MATRIZ ##########
+
+# Ya que hay algún error en la matriz vamos a utilizar una función para poder limpiar las columnas duplicadas y 
+# generar una columna nueva. 
+
+# Para ello vamos a generar una función (como si hiciéramos un programilla) para poder hacer el proceso. 
+
+fusionar_columnas <- function(data, columnas_a_unir, nuevo_nombre) {
+  # Comprobar que las columnas existen en el data.frame
+  columnas_a_unir <- columnas_a_unir[columnas_a_unir %in% names(data)]
+  
+  if (length(columnas_a_unir) < 2) {
+    warning("Debes indicar al menos dos columnas que existan en la matriz.")
+    return(data)
+  }
+  
+  # Crear la nueva columna como suma (ignorando NA)
+  data[[nuevo_nombre]] <- rowSums(data[, columnas_a_unir], na.rm = TRUE)
+  
+  # Eliminar las columnas originales (excepto la de nuevo nombre si ya existía)
+  data <- data[, !names(data) %in% setdiff(columnas_a_unir, nuevo_nombre)]
+  
+  return(data)
+}
+
+# Vamos a comprobar que existe la función
+
+macro_22_corregida <- fusionar_columnas(
+  macro_22_limpia,
+  c("Anophelinae", "Anophelinae_L"),
+  "Anophelinae_L"
+)
+
+
+write.xlsx(macro_22_corregida, "C:/Users/Pablo/Documents/R/extraccion_madrid_22/macro_22_corregida.xlsx", rowNames = FALSE)
+
+
+
 
 
 
